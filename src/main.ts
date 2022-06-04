@@ -5,7 +5,7 @@ import 'dotenv/config';
 
 (async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
   const corsOptionsCallback = (req, callback) => {
     const corsOptions = { origin: false, credentials: true };
     if (process.env.CORS_ORIGINS.split(',').includes(req.headers.origin)) {
@@ -13,13 +13,14 @@ import 'dotenv/config';
     }
     callback(null, corsOptions);
   };
-  
-  app.enableCors(corsOptionsCallback)
+
+  app.enableCors(corsOptionsCallback);
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Nibyou Microservice')
     .setDescription('Microservice Description')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, document);
