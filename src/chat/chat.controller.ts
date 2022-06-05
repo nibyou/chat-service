@@ -13,6 +13,7 @@ import { UpdateChatDto } from './dto/update-chat.dto';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -35,6 +36,7 @@ export class ChatController {
   @ApiBadRequestResponse({
     description: 'The members array must contain at least your user id.',
   })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
   @Roles({
     roles: [
       RealmRoles.ADMIN,
@@ -55,6 +57,7 @@ export class ChatController {
     description: 'The list of chats has been successfully returned.',
     type: [Chat],
   })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
   @Roles({
     roles: [RealmRoles.ADMIN, RealmRoles.BACKEND_SERVICE],
   })
@@ -68,6 +71,7 @@ export class ChatController {
     description: 'The list of chats has been successfully returned.',
     type: [Chat],
   })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
   @Roles({
     roles: [RealmRoles.USER_PRACTITIONER, RealmRoles.USER_PATIENT],
   })
@@ -81,6 +85,7 @@ export class ChatController {
     description: 'The chat has been successfully returned.',
     type: Chat,
   })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
   @Roles({
     roles: [
       RealmRoles.ADMIN,
@@ -99,6 +104,7 @@ export class ChatController {
     description: 'The chat has been successfully updated.',
     type: Chat,
   })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
   @Roles({
     roles: [
       RealmRoles.ADMIN,
@@ -119,6 +125,7 @@ export class ChatController {
   @ApiOkResponse({
     description: 'The chat has been successfully deleted.',
   })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
   @Roles({ roles: [RealmRoles.ADMIN, RealmRoles.BACKEND_SERVICE] })
   remove(@Param('id') id: string): Promise<void> {
     return this.chatService.remove(id);
@@ -130,6 +137,7 @@ export class ChatController {
     description:
       'The current user has been successfully removed from the chat.',
   })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
   @Roles({
     roles: [RealmRoles.USER_PRACTITIONER, RealmRoles.USER_PATIENT],
   })

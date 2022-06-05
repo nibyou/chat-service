@@ -12,6 +12,7 @@ import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import {
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -31,6 +32,7 @@ export class MessageController {
     description: 'The message has been successfully created.',
     type: Message,
   })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
   @Roles({
     roles: [
       RealmRoles.USER_PRACTITIONER,
@@ -52,6 +54,7 @@ export class MessageController {
     description: 'The messages have been successfully returned.',
     type: [Message],
   })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
   @Roles({
     roles: [RealmRoles.ADMIN, RealmRoles.BACKEND_SERVICE],
   })
@@ -65,6 +68,7 @@ export class MessageController {
     description: 'The messages have been successfully deleted.',
     type: [Message],
   })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
   @Roles({
     roles: [
       RealmRoles.USER_PRACTITIONER,
@@ -86,6 +90,7 @@ export class MessageController {
     description: 'The message has been successfully returned.',
     type: Message,
   })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
   @Roles({
     roles: [
       RealmRoles.USER_PRACTITIONER,
@@ -104,6 +109,7 @@ export class MessageController {
     description: 'The message has been successfully updated.',
     type: Message,
   })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
   @Roles({
     roles: [RealmRoles.BACKEND_SERVICE, RealmRoles.ADMIN],
   })
@@ -116,6 +122,7 @@ export class MessageController {
   @ApiOkResponse({
     description: 'The message has been successfully deleted.',
   })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
   @Roles({
     roles: [
       RealmRoles.USER_PRACTITIONER,
