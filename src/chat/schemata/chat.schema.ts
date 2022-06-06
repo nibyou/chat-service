@@ -5,7 +5,7 @@ import { GlobalStatus } from '@nibyou/types';
 
 export type ChatDocument = Chat & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Chat {
   @Prop()
   @ApiProperty({
@@ -34,21 +34,24 @@ export class Chat {
   })
   lastMessageAt: Date;
 
-  @Prop({
-    default(): any {
-      return new Date().toISOString();
-    },
+  @Prop({ type: () => GlobalStatus, default: GlobalStatus.ACTIVE })
+  @ApiProperty()
+  status: GlobalStatus;
+
+  @Prop()
+  @ApiProperty({
+    type: String,
+    format: 'uuid',
   })
+  _id: string;
+
+  @Prop()
   @ApiProperty()
   createdAt: Date;
 
   @Prop()
   @ApiProperty()
   updatedAt: Date;
-
-  @Prop({ type: () => GlobalStatus, default: GlobalStatus.ACTIVE })
-  @ApiProperty()
-  status: GlobalStatus;
 }
 
 export const ChatSchema = SchemaFactory.createForClass(Chat);

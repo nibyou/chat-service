@@ -1,13 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import * as mongoose from 'mongoose';
 import { Document } from 'mongoose';
 import { GlobalStatus } from '@nibyou/types';
 
 export type MessageDocument = Message & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Message {
-  @Prop()
+  @Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' } })
   @ApiProperty({
     description: 'Chat id the message belongs to',
     type: 'string',
@@ -23,11 +24,8 @@ export class Message {
   message: string;
 
   @Prop()
-  @ApiProperty({
-    description: 'Encrypted attachments for the message',
-    type: [String],
-  })
-  attachments: string[];
+  @ApiProperty()
+  hasAttachments: boolean;
 
   @Prop()
   @ApiProperty({
@@ -36,12 +34,6 @@ export class Message {
     format: 'uuid',
   })
   sender: string;
-
-  @Prop({ default: () => new Date().toISOString() })
-  @ApiProperty({
-    description: 'Message timestamp',
-  })
-  timestamp: Date;
 
   @Prop({ type: () => GlobalStatus, default: GlobalStatus.ACTIVE })
   @ApiProperty()
@@ -52,6 +44,21 @@ export class Message {
     type: [String],
   })
   readBy: string[];
+
+  @Prop()
+  @ApiProperty({
+    type: String,
+    format: 'uuid',
+  })
+  _id: string;
+
+  @Prop()
+  @ApiProperty()
+  createdAt: Date;
+
+  @Prop()
+  @ApiProperty()
+  updatedAt: Date;
 }
 
 export const MessageSchema = SchemaFactory.createForClass(Message);

@@ -6,6 +6,7 @@ import { ChatModule } from './chat/chat.module';
 import { MessageModule } from './message/message.module';
 import { WssModule } from './wss/wss.module';
 import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
+import { AttachmentModule } from './attachment/attachment.module';
 
 const mongoOptions: MongooseModuleOptions = {
   user: process.env.MONGO_USER || '',
@@ -21,6 +22,7 @@ const mongoOptions: MongooseModuleOptions = {
     MessageModule,
     WssModule,
     MongooseModule.forRoot(process.env.MONGO_URL, mongoOptions),
+    AttachmentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
