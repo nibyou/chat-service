@@ -38,7 +38,6 @@ export class Chat {
   @ApiProperty()
   status: GlobalStatus;
 
-  @Prop()
   @ApiProperty({
     type: String,
     format: 'uuid',

@@ -21,7 +21,6 @@ export class Attachment {
   })
   rawData: string;
 
-  @Prop()
   @ApiProperty({
     type: String,
     format: 'uuid',

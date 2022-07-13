@@ -45,7 +45,6 @@ export class Message {
   })
   readBy: string[];
 
-  @Prop()
   @ApiProperty({
     type: String,
     format: 'uuid',
