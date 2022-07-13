@@ -11,6 +11,7 @@ import { AttachmentService } from './attachment.service';
 import { CreateAttachmentDto } from './dto/create-attachment.dto';
 import { UpdateAttachmentDto } from './dto/update-attachment.dto';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiOkResponse,
@@ -22,6 +23,7 @@ import { Roles } from 'nest-keycloak-connect';
 import { RealmRoles } from '@nibyou/types';
 
 @ApiTags('attachment')
+@ApiBearerAuth()
 @Controller('attachment')
 export class AttachmentController {
   constructor(private readonly attachmentService: AttachmentService) {}

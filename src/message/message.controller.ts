@@ -11,6 +11,7 @@ import { MessageService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiOkResponse,
@@ -22,6 +23,7 @@ import { AuthenticatedUser, Roles } from 'nest-keycloak-connect';
 import { AuthUser, RealmRoles } from '@nibyou/types';
 
 @ApiTags('message')
+@ApiBearerAuth()
 @Controller('message')
 export class MessageController {
   constructor(private readonly messageService: MessageService) {}

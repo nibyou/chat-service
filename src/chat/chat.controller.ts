@@ -12,6 +12,7 @@ import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiOkResponse,
@@ -23,6 +24,7 @@ import { AuthUser, RealmRoles } from '@nibyou/types';
 import { Chat } from './schemata/chat.schema';
 
 @ApiTags('chat')
+@ApiBearerAuth()
 @Controller('chat')
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
