@@ -1,4 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  ApiHideProperty,
+  ApiProperty,
+  ApiPropertyOptional,
+} from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Document } from 'mongoose';
@@ -16,9 +20,7 @@ export type MessageDocument = Message & Document;
 })
 export class Message {
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: Chat.name }] })
-  @ApiProperty({
-    type: () => [Chat],
-  })
+  @ApiHideProperty()
   chats: Chat[];
 
   @ApiProperty({

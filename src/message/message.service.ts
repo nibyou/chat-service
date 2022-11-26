@@ -93,7 +93,7 @@ export class MessageService {
         _id: id,
         ...filterDeleted,
       })
-      .populate(['attachments']);
+      .populate(['attachments', 'chats', 'chat']);
 
     if (!message) {
       throw new HttpException('Message not found', 404);
