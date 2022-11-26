@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
@@ -82,8 +83,10 @@ export class MessageController {
   findForChat(
     @Param('chatId') chatId: string,
     @AuthenticatedUser() user: AuthUser,
+    @Query('limit') limit: number,
+    @Query('skip') offset: number,
   ) {
-    return this.messageService.findForChat(chatId, user);
+    return this.messageService.findForChat(chatId, user, limit, offset);
   }
 
   @Get(':id')

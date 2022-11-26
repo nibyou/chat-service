@@ -22,6 +22,7 @@ import {
 import { AuthenticatedUser, Roles } from 'nest-keycloak-connect';
 import { AuthUser, RealmRoles } from '@nibyou/types';
 import { Chat } from './schemata/chat.schema';
+import { ChatsWithLastMessagesDto } from './dto/get-chat.dto';
 
 @ApiTags('chat')
 @ApiBearerAuth()
@@ -71,7 +72,7 @@ export class ChatController {
   @ApiOperation({ summary: 'Get all chats for the current user' })
   @ApiOkResponse({
     description: 'The list of chats has been successfully returned.',
-    type: [Chat],
+    type: ChatsWithLastMessagesDto,
   })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
   @Roles({

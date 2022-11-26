@@ -1,8 +1,10 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Document } from 'mongoose';
 import { GlobalStatus } from '@nibyou/types';
+import { Chat } from '../../chat/schemata/chat.schema';
+import { Attachment } from '../../attachment/schemata/attachment.schema';
 
 export type MessageDocument = Message & Document;
 
@@ -10,11 +12,10 @@ export type MessageDocument = Message & Document;
 export class Message {
   @Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' } })
   @ApiProperty({
-    description: 'Chat id the message belongs to',
-    type: 'string',
-    format: 'uuid',
+    description: 'Chat the message belongs to',
+    type: () => Chat,
   })
-  chat: string;
+  chat: Chat;
 
   @Prop()
   @ApiProperty({
@@ -23,9 +24,14 @@ export class Message {
   })
   message: string;
 
-  @Prop()
-  @ApiProperty()
-  hasAttachments: boolean;
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Attachment' }],
+    default: [],
+  })
+  @ApiPropertyOptional({
+    type: () => [Attachment],
+  })
+  attachments?: Attachment[];
 
   @Prop()
   @ApiProperty({
@@ -42,6 +48,7 @@ export class Message {
   @Prop()
   @ApiProperty({
     type: [String],
+    format: 'uuid',
   })
   readBy: string[];
 

@@ -6,11 +6,18 @@ import { Chat, ChatDocument } from './schemata/chat.schema';
 import { Model } from 'mongoose';
 import { AuthUser, GlobalStatus } from '@nibyou/types';
 import { filterDeleted } from '../query-helpers/global.query-helpers';
+import {
+  ChatsWithLastMessagesDto,
+  ChatWithLastMessage,
+} from './dto/get-chat.dto';
+import { Message, MessageDocument } from '../message/schemata/message.schema';
 
 @Injectable()
 export class ChatService {
   constructor(
     @InjectModel(Chat.name) private readonly chatModel: Model<ChatDocument>,
+    @InjectModel(Message.name)
+    private readonly messageModel: Model<MessageDocument>,
   ) {}
 
   async create(createChatDto: CreateChatDto, user: AuthUser): Promise<Chat> {
@@ -50,8 +57,27 @@ export class ChatService {
     return this.chatModel.find();
   }
 
-  findForUser(user: AuthUser) {
-    return this.chatModel.find({ members: user.userId, ...filterDeleted });
+  async findForUser(user: AuthUser): Promise<ChatsWithLastMessagesDto> {
+    const chats = await this.chatModel.find({
+      members: user.userId,
+      ...filterDeleted,
+    });
+
+    const chatsWithMessage = await Promise.all(
+      chats.map(async (chat) => {
+        const lastMessage = await this.messageModel
+          .findOne({ chat: chat._id, ...filterDeleted })
+          .sort({ createdAt: -1 });
+        return {
+          chat,
+          lastMessage,
+        } as ChatWithLastMessage;
+      }),
+    );
+
+    return {
+      chats: chatsWithMessage,
+    };
   }
 
   async findOne(id: string, user: AuthUser) {

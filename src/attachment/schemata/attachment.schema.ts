@@ -1,6 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import * as mongoose from 'mongoose';
 import { Document } from 'mongoose';
+import { Chat } from '../../chat/schemata/chat.schema';
 
 export type AttachmentDocument = Attachment & Document;
 
@@ -15,11 +17,21 @@ export class Attachment {
   fileName?: string;
 
   @Prop()
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: String,
     format: 'base64',
   })
-  rawData: string;
+  rawData?: string;
+
+  @Prop()
+  @ApiPropertyOptional()
+  url?: string;
+
+  @Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' } })
+  @ApiProperty({
+    type: () => Chat,
+  })
+  chat: Chat;
 
   @ApiProperty({
     type: String,

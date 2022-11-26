@@ -4,6 +4,8 @@ import { MessageController } from './message.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Message, MessageSchema } from './schemata/message.schema';
 import { Chat, ChatSchema } from '../chat/schemata/chat.schema';
+import { AttachmentModule } from '../attachment/attachment.module';
+import { ChatModule } from '../chat/chat.module';
 
 @Module({
   controllers: [MessageController],
@@ -13,6 +15,8 @@ import { Chat, ChatSchema } from '../chat/schemata/chat.schema';
       { name: Message.name, schema: MessageSchema },
       { name: Chat.name, schema: ChatSchema },
     ]),
+    AttachmentModule,
+    ChatModule,
   ],
 })
 export class MessageModule {}

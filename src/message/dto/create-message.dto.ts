@@ -1,4 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, OmitType } from '@nestjs/swagger';
+import { CreateAttachmentDto } from '../../attachment/dto/create-attachment.dto';
 
 export class CreateMessageDto {
   @ApiProperty()
@@ -7,6 +8,8 @@ export class CreateMessageDto {
   message: string;
   @ApiProperty()
   sender?: string;
-  @ApiProperty()
-  attachments?: string[];
+  @ApiProperty({
+    type: [OmitType(CreateAttachmentDto, ['chatId'])],
+  })
+  attachments?: Partial<CreateAttachmentDto>[];
 }

@@ -5,6 +5,11 @@ import { GlobalStatus } from '@nibyou/types';
 
 export type ChatDocument = Chat & Document;
 
+export enum MemberType {
+  PRACTITIONER = 'PRACTITIONER',
+  PATIENT = 'PATIENT',
+}
+
 @Schema({ timestamps: true })
 export class Chat {
   @Prop()
@@ -18,15 +23,22 @@ export class Chat {
   @Prop()
   @ApiProperty({
     description:
-      'Group chats have a name, p2p chats are named after the other user',
+      'Group chats have a name, p2p chats should show name of the other user',
   })
   name?: string;
 
   @Prop()
   @ApiProperty({
     type: [String],
+    format: 'uuid',
   })
   members: string[];
+
+  @Prop()
+  @ApiProperty({
+    enum: MemberType,
+  })
+  memberType: MemberType;
 
   @Prop()
   @ApiProperty({

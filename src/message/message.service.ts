@@ -7,6 +7,8 @@ import { Message, MessageDocument } from './schemata/message.schema';
 import { AuthUser, GlobalStatus } from '@nibyou/types';
 import { Chat, ChatDocument } from '../chat/schemata/chat.schema';
 import { filterDeleted } from '../query-helpers/global.query-helpers';
+import { AttachmentService } from '../attachment/attachment.service';
+import { ChatService } from '../chat/chat.service';
 
 @Injectable()
 export class MessageService {
@@ -14,33 +16,55 @@ export class MessageService {
     @InjectModel(Message.name)
     private readonly messageModel: Model<MessageDocument>,
     @InjectModel(Chat.name) private readonly chatModel: Model<ChatDocument>,
+    private readonly attachmentService: AttachmentService,
+    private readonly chatService: ChatService,
   ) {}
 
   async create(
     createMessageDto: CreateMessageDto,
     user: AuthUser,
   ): Promise<Message> {
-    const chat = await this.chatModel.findOne({
-      _id: createMessageDto.chat,
-      ...filterDeleted,
+    const chat = await this.getChat(user, createMessageDto.chat);
+
+    const sender = AuthUser.isAdmin(user)
+      ? createMessageDto.sender || user.userId
+      : user.userId;
+
+    let attachments: string[];
+    if (createMessageDto.attachments?.length > 0) {
+      attachments = (await Promise.all(
+        createMessageDto.attachments.map(async (attachment) => {
+          const attachmentModel = await this.attachmentService.create(
+            {
+              ...attachment,
+              fileType: attachment.fileType || '',
+              chatId: chat._id,
+            },
+            user,
+          );
+          return attachmentModel._id;
+        }),
+      )) as string[];
+    }
+
+    if (attachments) {
+      delete createMessageDto.attachments;
+    }
+
+    const message = new this.messageModel({
+      ...createMessageDto,
+      attachments,
+      sender,
+      chat: chat._id,
     });
 
-    if (!chat) {
-      throw new HttpException('Chat not found', 400);
-    }
+    console.log('new message', message, 'chat', chat);
 
-    if (!AuthUser.isAdmin(user)) {
-      createMessageDto.sender = user.userId;
-    }
+    await this.chatModel.updateOne(
+      { _id: chat._id },
+      { $currentDate: { lastMessage: true } },
+    );
 
-    if (!chat.members.includes(createMessageDto.sender)) {
-      throw new HttpException(
-        'The user is not allowed to create a message in this chat',
-        403,
-      );
-    }
-
-    const message = new this.messageModel(createMessageDto);
     return message.save();
   }
 
@@ -48,24 +72,19 @@ export class MessageService {
     return this.messageModel.find();
   }
 
-  async findForChat(chatId: string, user: AuthUser) {
-    const chat = await this.chatModel.findOne({
-      _id: chatId,
-      ...filterDeleted,
-    });
-
-    if (!chat) {
-      throw new HttpException('Chat not found', 404);
-    }
-
-    if (chat.members.includes(user.userId) || AuthUser.isAdmin(user)) {
-      return this.messageModel.find({ chat, ...filterDeleted });
-    } else {
-      throw new HttpException(
-        'The user is not allowed to see messages in this chat',
-        403,
-      );
-    }
+  async findForChat(
+    chatId: string,
+    user: AuthUser,
+    limit: number,
+    skip: number,
+  ) {
+    const chat = await this.getChat(user, chatId);
+    console.log(chat);
+    return this.messageModel
+      .find({ chat: chat._id, ...filterDeleted })
+      .skip(skip)
+      .limit(limit)
+      .populate('attachments');
   }
 
   async findOne(id: string, user: AuthUser) {
@@ -128,5 +147,26 @@ export class MessageService {
     }
 
     throw new HttpException('You are not allowed to access this chat', 403);
+  }
+
+  private async getChat(user: AuthUser, chatId: string) {
+    const chat = await this.chatService.findOne(chatId, user).catch(() => {
+      throw new HttpException('Chat not found', 400);
+    });
+
+    if (!chat) {
+      throw new HttpException('Chat not found', 400);
+    }
+
+    if (!AuthUser.isAdmin(user)) {
+      if (!chat.members.includes(user.userId)) {
+        throw new HttpException(
+          'The user is not allowed to interact with this chat',
+          403,
+        );
+      }
+    }
+
+    return chat;
   }
 }

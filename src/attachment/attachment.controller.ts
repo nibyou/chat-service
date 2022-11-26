@@ -1,26 +1,19 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Param, Query } from '@nestjs/common';
 import { AttachmentService } from './attachment.service';
 import { CreateAttachmentDto } from './dto/create-attachment.dto';
 import { UpdateAttachmentDto } from './dto/update-attachment.dto';
-import {
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiForbiddenResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Attachment } from './schemata/attachment.schema';
-import { Roles } from 'nest-keycloak-connect';
-import { RealmRoles } from '@nibyou/types';
+import { AuthenticatedUser } from 'nest-keycloak-connect';
+import {
+  AuthUser,
+  CreateRequest,
+  DeleteRequest,
+  ReadRequest,
+  RealmRoles,
+  UpdateRequest,
+} from '@nibyou/types';
+import { S3UrlResponse } from './dto/s3-attachment.dto';
 
 @ApiTags('attachment')
 @ApiBearerAuth()
@@ -28,14 +21,26 @@ import { RealmRoles } from '@nibyou/types';
 export class AttachmentController {
   constructor(private readonly attachmentService: AttachmentService) {}
 
-  @Post()
-  @ApiOperation({ summary: 'Create a new attachment' })
-  @ApiCreatedResponse({
+  @ReadRequest({
+    path: 'presigned-s3-url',
+    summary: 'Get a presigned S3 URL',
+    description: 'The presigned S3 URL has been successfully returned.',
+    returnType: S3UrlResponse,
+    roles: [
+      RealmRoles.USER_PRACTITIONER,
+      RealmRoles.USER_PATIENT,
+      RealmRoles.BACKEND_SERVICE,
+      RealmRoles.ADMIN,
+    ],
+  })
+  getPresignedS3Url(@Query('ext') ext: string) {
+    return this.attachmentService.getAttachmentUrl(ext);
+  }
+
+  @CreateRequest({
+    summary: 'Create a new attachment',
     description: 'The attachment has been successfully created.',
-    type: Attachment,
-  })
-  @ApiForbiddenResponse({ description: 'Forbidden.' })
-  @Roles({
+    returnType: Attachment,
     roles: [
       RealmRoles.USER_PRACTITIONER,
       RealmRoles.USER_PATIENT,
@@ -43,30 +48,28 @@ export class AttachmentController {
       RealmRoles.ADMIN,
     ],
   })
-  create(@Body() createAttachmentDto: CreateAttachmentDto) {
-    return this.attachmentService.create(createAttachmentDto);
+  create(
+    @Body() createAttachmentDto: CreateAttachmentDto,
+    @AuthenticatedUser() user: AuthUser,
+  ) {
+    return this.attachmentService.create(createAttachmentDto, user);
   }
 
-  @Get()
-  @ApiOperation({ summary: 'Get all attachments' })
-  @ApiOkResponse({
+  @ReadRequest({
+    summary: 'Get an attachment',
     description: 'The attachments have been successfully returned.',
-    type: [Attachment],
+    returnType: [Attachment],
+    roles: [RealmRoles.ADMIN, RealmRoles.BACKEND_SERVICE],
   })
-  @ApiForbiddenResponse({ description: 'Forbidden.' })
-  @Roles({ roles: [RealmRoles.ADMIN, RealmRoles.BACKEND_SERVICE] })
-  findAll() {
-    return this.attachmentService.findAll();
+  findAll(@Query('filter') filter: string) {
+    return this.attachmentService.findAll(filter);
   }
 
-  @Get()
-  @ApiOperation({ summary: 'Get all attachments for a message' })
-  @ApiOkResponse({
+  @ReadRequest({
+    path: 'message/:messageId',
+    summary: 'Get all attachments for a message',
     description: 'The attachments have been successfully returned.',
-    type: [Attachment],
-  })
-  @ApiForbiddenResponse({ description: 'Forbidden.' })
-  @Roles({
+    returnType: [Attachment],
     roles: [
       RealmRoles.USER_PRACTITIONER,
       RealmRoles.USER_PATIENT,
@@ -74,25 +77,62 @@ export class AttachmentController {
       RealmRoles.ADMIN,
     ],
   })
-  findForMessage(@Param('messageId') messageId: string) {
-    return this.attachmentService.findForMessage(messageId);
+  findForMessage(
+    @Param('messageId') messageId: string,
+    @AuthenticatedUser() user: AuthUser,
+  ) {
+    return this.attachmentService.findForMessage(messageId, user);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.attachmentService.findOne(+id);
+  @ReadRequest({
+    path: ':id',
+    summary: 'Get an attachment',
+    description: 'The attachment has been successfully returned.',
+    returnType: Attachment,
+    roles: [
+      RealmRoles.USER_PRACTITIONER,
+      RealmRoles.USER_PATIENT,
+      RealmRoles.BACKEND_SERVICE,
+      RealmRoles.ADMIN,
+    ],
+  })
+  findOne(@Param('id') id: string, @AuthenticatedUser() user: AuthUser) {
+    return this.attachmentService.findOne(id, user);
   }
 
-  @Patch(':id')
+  @UpdateRequest({
+    path: ':id',
+    summary: 'Update an attachment',
+    description: 'The attachment has been successfully updated.',
+    returnType: Attachment,
+    roles: [
+      RealmRoles.USER_PRACTITIONER,
+      RealmRoles.USER_PATIENT,
+      RealmRoles.BACKEND_SERVICE,
+      RealmRoles.ADMIN,
+    ],
+  })
   update(
     @Param('id') id: string,
     @Body() updateAttachmentDto: UpdateAttachmentDto,
+    @AuthenticatedUser() user: AuthUser,
   ) {
-    return this.attachmentService.update(+id, updateAttachmentDto);
+    return this.attachmentService.update(id, updateAttachmentDto, user);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.attachmentService.remove(+id);
+  @DeleteRequest({
+    path: ':id',
+    summary: 'Delete an attachment',
+    description: 'The attachment has been successfully deleted.',
+    returnType: null,
+    roles: [
+      RealmRoles.USER_PRACTITIONER,
+      RealmRoles.USER_PATIENT,
+      RealmRoles.BACKEND_SERVICE,
+      RealmRoles.ADMIN,
+    ],
+  })
+  remove(@Param('id') id: string, @AuthenticatedUser() user: AuthUser) {
+    return this.attachmentService.remove(id, user);
   }
 }
