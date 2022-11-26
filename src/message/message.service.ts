@@ -51,21 +51,21 @@ export class MessageService {
       delete createMessageDto.attachments;
     }
 
-    const message = new this.messageModel({
-      ...createMessageDto,
-      attachments,
+    delete createMessageDto.chat;
+    const message: Partial<MessageDocument> = {
+      message: createMessageDto.message,
+      attachments: attachments as any[],
       sender,
-      chat: chat._id,
-    });
-
-    console.log('new message', message, 'chat', chat);
-
+      chats: [chat._id],
+    };
     await this.chatModel.updateOne(
       { _id: chat._id },
-      { $currentDate: { lastMessage: true } },
+      { $currentDate: { lastMessageAt: true } },
     );
 
-    return message.save();
+    const chatM = await this.messageModel.create(message);
+    console.log(chatM);
+    return chatM;
   }
 
   async findAll(): Promise<Message[]> {
@@ -81,24 +81,26 @@ export class MessageService {
     const chat = await this.getChat(user, chatId);
     console.log(chat);
     return this.messageModel
-      .find({ chat: chat._id, ...filterDeleted })
+      .find({ chats: chat._id, ...filterDeleted })
       .skip(skip)
       .limit(limit)
-      .populate('attachments');
+      .populate(['attachments']);
   }
 
   async findOne(id: string, user: AuthUser) {
-    const message = await this.messageModel.findOne({
-      _id: id,
-      ...filterDeleted,
-    });
+    const message = await this.messageModel
+      .findOne({
+        _id: id,
+        ...filterDeleted,
+      })
+      .populate(['attachments']);
 
     if (!message) {
       throw new HttpException('Message not found', 404);
     }
 
     const chat = await this.chatModel.findOne({
-      _id: message.chat,
+      _id: message.chats[0],
       ...filterDeleted,
     });
 
@@ -131,7 +133,7 @@ export class MessageService {
     }
 
     const chat = await this.chatModel.findOne({
-      _id: message.chat,
+      _id: message.chats[0],
       ...filterDeleted,
     });
 

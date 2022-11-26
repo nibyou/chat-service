@@ -49,8 +49,7 @@ export class ChatService {
       }
     }
 
-    const chat = new this.chatModel(createChatDto);
-    return chat.save();
+    return this.chatModel.create(createChatDto);
   }
 
   findAll() {

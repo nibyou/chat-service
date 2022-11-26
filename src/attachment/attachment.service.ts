@@ -33,16 +33,16 @@ export class AttachmentService {
 
     const payload = {
       ...createAttachmentDto,
-      chat: chat._id,
+      chat: chat,
     };
 
-    const attachment = new this.attachmentModel(payload);
-    return attachment.save();
+    return this.attachmentModel.create(payload);
   }
 
   findAll(f?: string) {
     try {
       const filter = JSON.parse(f);
+      console.log(filter);
       return this.attachmentModel.find(filter);
     } catch (e) {
       return this.attachmentModel.find();
@@ -54,7 +54,7 @@ export class AttachmentService {
       .findOne({ _id: messageId, ...filterDeleted })
       .populate('attachments');
 
-    await this.getChat(user, message.chat.toString());
+    await this.getChat(user, message.chats[0].toString());
 
     return message.attachments;
   }

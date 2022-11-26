@@ -8,12 +8,21 @@ import { Attachment } from '../../attachment/schemata/attachment.schema';
 
 export type MessageDocument = Message & Document;
 
-@Schema({ timestamps: true })
+@Schema({
+  timestamps: true,
+  toJSON: {
+    virtuals: true,
+  },
+})
 export class Message {
-  @Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' } })
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: Chat.name }] })
   @ApiProperty({
-    description: 'Chat the message belongs to',
-    type: () => Chat,
+    type: () => [Chat],
+  })
+  chats: Chat[];
+
+  @ApiProperty({
+    type: Chat,
   })
   chat: Chat;
 
@@ -67,4 +76,14 @@ export class Message {
   updatedAt: Date;
 }
 
-export const MessageSchema = SchemaFactory.createForClass(Message);
+const MessageSchema = SchemaFactory.createForClass(Message);
+
+MessageSchema.virtual('chat', {
+  ref: Chat.name,
+  localField: 'chats',
+  foreignField: '_id',
+}).get(function (this: MessageDocument) {
+  return this.chats[0];
+});
+
+export { MessageSchema };
