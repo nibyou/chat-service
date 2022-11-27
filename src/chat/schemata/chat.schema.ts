@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { GlobalStatus } from '@nibyou/types';
@@ -13,7 +13,7 @@ export enum MemberType {
 @Schema({ timestamps: true })
 export class Chat {
   @Prop()
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Group chats have an admin',
     type: 'string',
     format: 'uuid',
@@ -21,7 +21,7 @@ export class Chat {
   admin?: string;
 
   @Prop()
-  @ApiProperty({
+  @ApiPropertyOptional({
     description:
       'Group chats have a name, p2p chats should show name of the other user',
   })
