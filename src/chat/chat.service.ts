@@ -104,8 +104,9 @@ export class ChatService {
     }
 
     return this.chatModel.findOneAndUpdate(
-      { _id: id, members: user.userId, ...filterDeleted },
+      { _id: id, ...filterDeleted },
       updateChatDto,
+      { new: true },
     );
   }
 

@@ -119,6 +119,7 @@ export class MessageService {
     return this.messageModel.findOneAndUpdate(
       { _id: id, ...filterDeleted },
       updateMessageDto,
+      { new: true },
     );
   }
 
