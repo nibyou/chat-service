@@ -57,10 +57,12 @@ export class ChatService {
   }
 
   async findForUser(user: AuthUser): Promise<ChatsWithLastMessagesDto> {
-    const chats = await this.chatModel.find({
-      members: user.userId,
-      ...filterDeleted,
-    });
+    const chats = await this.chatModel
+      .find({
+        members: user.userId,
+        ...filterDeleted,
+      })
+      .sort({ lastMessageAt: -1 });
 
     const chatsWithMessage = await Promise.all(
       chats.map(async (chat) => {

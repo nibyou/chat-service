@@ -22,6 +22,7 @@ import {
 import { Message } from './schemata/message.schema';
 import { AuthenticatedUser, Roles } from 'nest-keycloak-connect';
 import { AuthUser, RealmRoles } from '@nibyou/types';
+import { PaginationQueryDto } from './dto/get-message.dto';
 
 @ApiTags('message')
 @ApiBearerAuth()
@@ -83,10 +84,9 @@ export class MessageController {
   findForChat(
     @Param('chatId') chatId: string,
     @AuthenticatedUser() user: AuthUser,
-    @Query('limit') limit: number,
-    @Query('skip') offset: number,
+    @Query() { skip, limit, start }: PaginationQueryDto,
   ) {
-    return this.messageService.findForChat(chatId, user, limit, offset);
+    return this.messageService.findForChat(chatId, user, limit, skip, start);
   }
 
   @Get(':id')

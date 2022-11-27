@@ -75,13 +75,20 @@ export class MessageService {
   async findForChat(
     chatId: string,
     user: AuthUser,
-    limit: number,
-    skip: number,
+    limit?: number,
+    skip?: number,
+    start?: string,
   ) {
     const chat = await this.getChat(user, chatId);
-    console.log(chat);
     return this.messageModel
-      .find({ chats: chat._id, ...filterDeleted })
+      .find({
+        chats: chat._id,
+        ...filterDeleted,
+        _id: {
+          $gt: start,
+        },
+      })
+      .sort({ _id: -1 })
       .skip(skip)
       .limit(limit)
       .populate(['attachments']);
