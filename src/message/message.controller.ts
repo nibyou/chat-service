@@ -31,7 +31,10 @@ export class MessageController {
   constructor(private readonly messageService: MessageService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new message' })
+  @ApiOperation({
+    summary: 'Create a new message',
+    operationId: 'createMessage',
+  })
   @ApiCreatedResponse({
     description: 'The message has been successfully created.',
     type: Message,
@@ -53,7 +56,7 @@ export class MessageController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all messages' })
+  @ApiOperation({ summary: 'Get all messages', operationId: 'getAllMessages' })
   @ApiOkResponse({
     description: 'The messages have been successfully returned.',
     type: [Message],
@@ -67,7 +70,10 @@ export class MessageController {
   }
 
   @Get('/chat/:chatId')
-  @ApiOperation({ summary: 'Get all messages for a given chat' })
+  @ApiOperation({
+    summary: 'Get all messages for a given chat',
+    operationId: 'getAllMessagesForChat',
+  })
   @ApiOkResponse({
     description: 'The messages have been successfully deleted.',
     type: [Message],
@@ -90,7 +96,10 @@ export class MessageController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a message by id' })
+  @ApiOperation({
+    summary: 'Get a message by id',
+    operationId: 'getMessageById',
+  })
   @ApiOkResponse({
     description: 'The message has been successfully returned.',
     type: Message,
@@ -109,7 +118,7 @@ export class MessageController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update a message' })
+  @ApiOperation({ summary: 'Update a message', operationId: 'updateMessage' })
   @ApiOkResponse({
     description: 'The message has been successfully updated.',
     type: Message,
@@ -123,7 +132,7 @@ export class MessageController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a message' })
+  @ApiOperation({ summary: 'Delete a message', operationId: 'deleteMessage' })
   @ApiOkResponse({
     description: 'The message has been successfully deleted.',
   })

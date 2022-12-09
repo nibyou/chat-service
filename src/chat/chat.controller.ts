@@ -31,7 +31,7 @@ export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new chat' })
+  @ApiOperation({ summary: 'Create a new chat', operationId: 'createChat' })
   @ApiCreatedResponse({
     description: 'The chat has been successfully created.',
     type: Chat,
@@ -55,7 +55,7 @@ export class ChatController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all chats' })
+  @ApiOperation({ summary: 'Get all chats', operationId: 'getChats' })
   @ApiOkResponse({
     description: 'The list of chats has been successfully returned.',
     type: [Chat],
@@ -69,7 +69,10 @@ export class ChatController {
   }
 
   @Get('/me')
-  @ApiOperation({ summary: 'Get all chats for the current user' })
+  @ApiOperation({
+    summary: 'Get all chats for the current user',
+    operationId: 'getChatsForCurrentUser',
+  })
   @ApiOkResponse({
     description: 'The list of chats has been successfully returned.',
     type: ChatsWithLastMessagesDto,
@@ -83,7 +86,7 @@ export class ChatController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a chat by id' })
+  @ApiOperation({ summary: 'Get a chat by id', operationId: 'getChatById' })
   @ApiOkResponse({
     description: 'The chat has been successfully returned.',
     type: Chat,
@@ -102,7 +105,7 @@ export class ChatController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update a chat' })
+  @ApiOperation({ summary: 'Update a chat', operationId: 'updateChat' })
   @ApiOkResponse({
     description: 'The chat has been successfully updated.',
     type: Chat,
@@ -124,7 +127,7 @@ export class ChatController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a chat' })
+  @ApiOperation({ summary: 'Delete a chat', operationId: 'deleteChat' })
   @ApiOkResponse({
     description: 'The chat has been successfully deleted.',
   })
@@ -135,7 +138,10 @@ export class ChatController {
   }
 
   @Delete(':id/me')
-  @ApiOperation({ summary: 'Remove the current user from a chat' })
+  @ApiOperation({
+    summary: 'Remove the current user from a chat',
+    operationId: 'removeCurrentUserFromChat',
+  })
   @ApiOkResponse({
     description:
       'The current user has been successfully removed from the chat.',

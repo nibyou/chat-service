@@ -2,7 +2,7 @@ import { Body, Controller, Param, Query } from '@nestjs/common';
 import { AttachmentService } from './attachment.service';
 import { CreateAttachmentDto } from './dto/create-attachment.dto';
 import { UpdateAttachmentDto } from './dto/update-attachment.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Attachment } from './schemata/attachment.schema';
 import { AuthenticatedUser } from 'nest-keycloak-connect';
 import {
@@ -33,6 +33,7 @@ export class AttachmentController {
       RealmRoles.ADMIN,
     ],
   })
+  @ApiOperation({ operationId: 'getPresignedS3Url' })
   getPresignedS3Url(@Query('ext') ext: string) {
     return this.attachmentService.getAttachmentUrl(ext);
   }
@@ -48,6 +49,7 @@ export class AttachmentController {
       RealmRoles.ADMIN,
     ],
   })
+  @ApiOperation({ operationId: 'createAttachment' })
   create(
     @Body() createAttachmentDto: CreateAttachmentDto,
     @AuthenticatedUser() user: AuthUser,
@@ -61,6 +63,7 @@ export class AttachmentController {
     returnType: [Attachment],
     roles: [RealmRoles.ADMIN, RealmRoles.BACKEND_SERVICE],
   })
+  @ApiOperation({ operationId: 'getAttachments' })
   findAll(@Query('filter') filter: string) {
     return this.attachmentService.findAll(filter);
   }
@@ -77,6 +80,7 @@ export class AttachmentController {
       RealmRoles.ADMIN,
     ],
   })
+  @ApiOperation({ operationId: 'getAttachmentsForMessage' })
   findForMessage(
     @Param('messageId') messageId: string,
     @AuthenticatedUser() user: AuthUser,
@@ -96,6 +100,7 @@ export class AttachmentController {
       RealmRoles.ADMIN,
     ],
   })
+  @ApiOperation({ operationId: 'getAttachment' })
   findOne(@Param('id') id: string, @AuthenticatedUser() user: AuthUser) {
     return this.attachmentService.findOne(id, user);
   }
@@ -112,6 +117,7 @@ export class AttachmentController {
       RealmRoles.ADMIN,
     ],
   })
+  @ApiOperation({ operationId: 'updateAttachment' })
   update(
     @Param('id') id: string,
     @Body() updateAttachmentDto: UpdateAttachmentDto,
@@ -132,6 +138,7 @@ export class AttachmentController {
       RealmRoles.ADMIN,
     ],
   })
+  @ApiOperation({ operationId: 'deleteAttachment' })
   remove(@Param('id') id: string, @AuthenticatedUser() user: AuthUser) {
     return this.attachmentService.remove(id, user);
   }
