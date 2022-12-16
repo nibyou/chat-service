@@ -46,6 +46,13 @@ export class Chat {
   })
   lastMessageAt: Date;
 
+  @Prop()
+  @ApiProperty({
+    type: 'string',
+    format: 'uuid',
+  })
+  keyId: string;
+
   @Prop({ type: () => GlobalStatus, default: GlobalStatus.ACTIVE })
   @ApiProperty()
   status: GlobalStatus;

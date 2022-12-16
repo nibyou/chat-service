@@ -7,6 +7,7 @@ import { MessageModule } from './message/message.module';
 import { WssModule } from './wss/wss.module';
 import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
 import { AttachmentModule } from './attachment/attachment.module';
+import { EconsultModule } from './econsult/econsult.module';
 
 const mongoOptions: MongooseModuleOptions = {
   user: process.env.MONGO_USER || '',
@@ -23,6 +24,7 @@ const mongoOptions: MongooseModuleOptions = {
     WssModule,
     MongooseModule.forRoot(process.env.MONGO_URL, mongoOptions),
     AttachmentModule,
+    EconsultModule,
   ],
   controllers: [AppController],
   providers: [AppService],

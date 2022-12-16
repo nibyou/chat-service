@@ -1440,10 +1440,10 @@
     keycloak-connect "^15.1.1"
     nest-keycloak-connect "^1.8.3"
 
-"@nibyou/types@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@nibyou/types/-/types-2.1.0.tgz#8baa7052d33d093f5ef4c8d4bb4060ff5ba332e8"
-  integrity sha512-ClJHTfjAyYijsNzRFLdVlnv6y3FKS3F2fQJKX/Kp9JkdVh8DAgXClbH7m7vkkwsAHmj5QnmejlygR1d7fz0JKg==
+"@nibyou/types@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@nibyou/types/-/types-2.1.1.tgz#d014343506f72527db01a7df14d95b9ed92c656b"
+  integrity sha512-dOXZ7BbM9sROpwDHgO3wNTTVW+qTd2C2kG9i+S71DHdlbG6rwvGcrHETjn277Y05kCIkIxTPpxmIe7EbKhzyJA==
   dependencies:
     "@nestjs/mongoose" "^9.2.0"
     "@nestjs/swagger" "^5.2.1"
@@ -1676,6 +1676,13 @@
   version "0.0.29"
   resolved "https://registry.npmjs.org/@types/json5/-/json5-0.0.29.tgz"
   integrity sha1-7ihweulOEdK4J7y+UnC86n8+ce4=
+
+"@types/jsonwebtoken@^8.5.9":
+  version "8.5.9"
+  resolved "https://registry.yarnpkg.com/@types/jsonwebtoken/-/jsonwebtoken-8.5.9.tgz#2c064ecb0b3128d837d2764aa0b117b0ff6e4586"
+  integrity sha512-272FMnFGzAVMGtu9tkr29hRL6bZj4Zs1KZNeHLnKqAvp06tAIcarTMwOh8/8bz4FmKRcMxZhZNeUAQsNLoiPhg==
+  dependencies:
+    "@types/node" "*"
 
 "@types/mime@^1":
   version "1.3.2"
@@ -4836,7 +4843,7 @@ jsonfile@^6.0.1:
 
 jsonwebtoken@^8.5.1:
   version "8.5.1"
-  resolved "https://registry.npmjs.org/jsonwebtoken/-/jsonwebtoken-8.5.1.tgz"
+  resolved "https://registry.yarnpkg.com/jsonwebtoken/-/jsonwebtoken-8.5.1.tgz#00e71e0b8df54c2121a1f26137df2280673bcc0d"
   integrity sha512-XjwVfRS6jTMsqYs0EsuJ4LGxXV14zQybNd4L2r0UvbVnSF9Af8x7p5MzbJ90Ioz/9TI41/hTCvznF/loiSzn8w==
   dependencies:
     jws "^3.2.2"

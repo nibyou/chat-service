@@ -11,6 +11,7 @@ import {
   ChatWithLastMessage,
 } from './dto/get-chat.dto';
 import { Message, MessageDocument } from '../message/schemata/message.schema';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class ChatService {
@@ -49,7 +50,12 @@ export class ChatService {
       }
     }
 
-    return this.chatModel.create(createChatDto);
+    const chat = {
+      ...createChatDto,
+      keyId: v4(),
+    };
+
+    return this.chatModel.create(chat);
   }
 
   findAll() {
