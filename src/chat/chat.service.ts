@@ -73,7 +73,7 @@ export class ChatService {
     const chatsWithMessage = await Promise.all(
       chats.map(async (chat) => {
         const lastMessage = await this.messageModel
-          .findOne({ chat: chat._id, ...filterDeleted })
+          .findOne({ chats: chat._id, ...filterDeleted })
           .sort({ createdAt: -1 });
         return {
           chat,
