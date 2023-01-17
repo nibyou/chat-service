@@ -80,13 +80,18 @@ export class MessageService {
     start?: string,
   ) {
     const chat = await this.getChat(user, chatId);
-    return this.messageModel
-      .find({
-        chats: chat._id,
-        ...filterDeleted,
+    let idFilter = null;
+
+    if (start)
+      idFilter = {
         _id: {
           $gt: start,
         },
+      };
+    return this.messageModel
+      .find({
+        chats: chat._id,
+        ...idFilter,
       })
       .sort({ _id: -1 })
       .skip(skip)
