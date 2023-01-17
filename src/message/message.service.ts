@@ -80,18 +80,26 @@ export class MessageService {
     start?: string,
   ) {
     const chat = await this.getChat(user, chatId);
-    return this.messageModel
-      .find({
-        chats: chat._id,
-        ...filterDeleted,
+    console.log('CHAT', chat);
+    let idFilter = null;
+
+    if (start)
+      idFilter = {
         _id: {
           $gt: start,
         },
+      };
+    const messages = await this.messageModel
+      .find({
+        chats: chat._id,
+        ...idFilter,
       })
       .sort({ _id: -1 })
       .skip(skip)
       .limit(limit)
       .populate(['attachments']);
+    console.log('MESSAGES', messages);
+    return messages;
   }
 
   async findOne(id: string, user: AuthUser) {
