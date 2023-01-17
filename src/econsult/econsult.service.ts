@@ -20,7 +20,7 @@ export class EconsultService {
           iss: process.env.EC_ISS,
           moderator: false,
           room: dto.roomName,
-          sub: process.env.EC_SUB,
+          sub: '*', //process.env.EC_SUB,
         },
         process.env.EC_SECRET,
         {

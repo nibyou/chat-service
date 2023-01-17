@@ -9,6 +9,7 @@ import { Document } from 'mongoose';
 import { GlobalStatus } from '@nibyou/types';
 import { Chat } from '../../chat/schemata/chat.schema';
 import { Attachment } from '../../attachment/schemata/attachment.schema';
+import { Exclude } from 'class-transformer';
 
 export type MessageDocument = Message & Document;
 
@@ -21,6 +22,7 @@ export type MessageDocument = Message & Document;
 export class Message {
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: Chat.name }] })
   @ApiHideProperty()
+  @Exclude()
   chats: Chat[];
 
   @ApiProperty({
