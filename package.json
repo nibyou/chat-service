@@ -19,7 +19,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "generate:openapi": "npx @openapitools/openapi-generator-cli generate"
   },
   "dependencies": {
     "@liaoliaots/nestjs-redis": "^8.1.0",
@@ -31,8 +32,9 @@
     "@nestjs/platform-socket.io": "^8.4.5",
     "@nestjs/swagger": "^5.2.1",
     "@nestjs/websockets": "^8.4.5",
-    "@nibyou/keycloak": "^1.0.0",
+    "@nibyou/keycloak": "^1.2.0",
     "@nibyou/types": "^2.1.1",
+    "@openapitools/openapi-generator-cli": "^2.5.2",
     "@types/jsonwebtoken": "^8.5.9",
     "@types/mongoose": "^5.11.97",
     "class-transformer": "^0.5.1",

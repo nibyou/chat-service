@@ -1,0 +1,19 @@
+{
+  "$schema": "./node_modules/@openapitools/openapi-generator-cli/config.schema.json",
+  "spaces": 2,
+  "generator-cli": {
+    "version": "6.0.1",
+    "generators": {
+      "profile": {
+        "generatorName": "typescript-axios",
+        "inputSpec": "https://profile.nibyouservice.net/api-json",
+        "output": "#{cwd}/src/generated/profile"
+      },
+      "user": {
+        "generatorName": "typescript-axios",
+        "inputSpec": "https://user-service.dev.nibyou.com/api-json",
+        "output": "#{cwd}/src/generated/user"
+      }
+    }
+  }
+}

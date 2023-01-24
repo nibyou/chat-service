@@ -7,8 +7,10 @@ import { Model } from 'mongoose';
 import { AuthUser, GlobalStatus } from '@nibyou/types';
 import { filterDeleted } from '../query-helpers/global.query-helpers';
 import {
+  ChatsWithLastMessageAndUserInfoDto,
   ChatsWithLastMessagesDto,
   ChatWithLastMessage,
+  ChatWithLastMessageAndUserInfo,
 } from './dto/get-chat.dto';
 import { Message, MessageDocument } from '../message/schemata/message.schema';
 import { v4 } from 'uuid';
@@ -79,6 +81,38 @@ export class ChatService {
           chat,
           lastMessage,
         } as ChatWithLastMessage;
+      }),
+    );
+
+    return {
+      chats: chatsWithMessage,
+    };
+  }
+
+  async findForUserWithProfileInfo(
+    user: AuthUser,
+  ): Promise<ChatsWithLastMessageAndUserInfoDto> {
+    const chats = await this.chatModel
+      .find({
+        members: user.userId,
+        ...filterDeleted,
+      })
+      .sort({ lastMessageAt: -1 });
+
+    const chatsWithMessage = await Promise.all(
+      chats.map(async (chat) => {
+        const lastMessage = await this.messageModel
+          .findOne({ chats: chat._id, ...filterDeleted })
+          .sort({ createdAt: -1 });
+
+        return {
+          chat,
+          lastMessage,
+          userId: '',
+          firstName: '',
+          lastName: '',
+          profileImage: '',
+        } as ChatWithLastMessageAndUserInfo;
       }),
     );
 

@@ -22,7 +22,10 @@ import {
 import { AuthenticatedUser, Roles } from 'nest-keycloak-connect';
 import { AuthUser, RealmRoles } from '@nibyou/types';
 import { Chat } from './schemata/chat.schema';
-import { ChatsWithLastMessagesDto } from './dto/get-chat.dto';
+import {
+  ChatsWithLastMessageAndUserInfoDto,
+  ChatsWithLastMessagesDto,
+} from './dto/get-chat.dto';
 
 @ApiTags('chat')
 @ApiBearerAuth()
@@ -79,10 +82,35 @@ export class ChatController {
   })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
   @Roles({
-    roles: [RealmRoles.USER_PRACTITIONER, RealmRoles.USER_PATIENT],
+    roles: [
+      RealmRoles.USER_PRACTITIONER,
+      RealmRoles.USER_PATIENT,
+      RealmRoles.ADMIN,
+    ],
   })
   findForUser(@AuthenticatedUser() user: AuthUser) {
     return this.chatService.findForUser(user);
+  }
+
+  @Get('/me/withProfileInfo')
+  @ApiOperation({
+    summary: 'Get all chats for the current user with profile info of members',
+    operationId: 'getChatsForCurrentUserWithProfileInfo',
+  })
+  @ApiOkResponse({
+    description: 'The list of chats has been successfully returned.',
+    type: ChatsWithLastMessageAndUserInfoDto,
+  })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
+  @Roles({
+    roles: [
+      RealmRoles.USER_PRACTITIONER,
+      RealmRoles.USER_PATIENT,
+      RealmRoles.ADMIN,
+    ],
+  })
+  findForUserWithProfileInfo(@AuthenticatedUser() user: AuthUser) {
+    return this.chatService.findForUserWithProfileInfo(user);
   }
 
   @Get(':id')
