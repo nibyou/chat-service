@@ -92,6 +92,7 @@ export class MessageService {
       .find({
         chats: chat._id,
         ...idFilter,
+        ...filterDeleted,
       })
       .sort({ _id: -1 })
       .skip(skip)
