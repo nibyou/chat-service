@@ -156,7 +156,7 @@ export class MessageService {
     }
 
     if (AuthUser.isAdmin(user) || chat.members.includes(user.userId)) {
-      await this.messageModel.findOneAndUpdate(
+      return this.messageModel.findOneAndUpdate(
         { _id: id, ...filterDeleted },
         { status: GlobalStatus.DELETED },
       );
@@ -184,5 +184,16 @@ export class MessageService {
     }
 
     return chat;
+  }
+
+  async getUnreadCount(chatId: string, user: AuthUser): Promise<number> {
+    const chat = await this.getChat(user, chatId);
+    return this.messageModel.countDocuments({
+      chats: chat._id,
+      ...filterDeleted,
+      readBy: {
+        $ne: user.userId,
+      },
+    });
   }
 }

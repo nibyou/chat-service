@@ -147,4 +147,27 @@ export class MessageController {
   async remove(@Param('id') id: string, @AuthenticatedUser() user: AuthUser) {
     await this.messageService.remove(id, user);
   }
+
+  @Get('unread/:chatId')
+  @ApiOperation({
+    summary: 'Get unread message count for a Chat',
+    operationId: 'getUnreadCount',
+  })
+  @ApiOkResponse({
+    description: 'The count of unread messages for the Chat has been returned.',
+  })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
+  @Roles({
+    roles: [
+      RealmRoles.USER_PRACTITIONER,
+      RealmRoles.BACKEND_SERVICE,
+      RealmRoles.ADMIN,
+    ],
+  })
+  getUnreadCount(
+    @Param('chatId') chatId: string,
+    @AuthenticatedUser() user: AuthUser,
+  ) {
+    return this.messageService.getUnreadCount(chatId, user);
+  }
 }
