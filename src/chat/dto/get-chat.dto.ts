@@ -25,6 +25,13 @@ export class ChatsWithLastMessageAndUserInfoDto {
 
 export class ChatWithLastMessageAndUserInfo extends ChatWithLastMessage {
   @ApiProperty({
+    type: () => [UserProfileData],
+  })
+  users: UserProfileData[];
+}
+
+export class UserProfileData {
+  @ApiProperty({
     type: String,
     format: 'uuid',
   })

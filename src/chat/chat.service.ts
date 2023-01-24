@@ -14,6 +14,8 @@ import {
 } from './dto/get-chat.dto';
 import { Message, MessageDocument } from '../message/schemata/message.schema';
 import { v4 } from 'uuid';
+import { PractitionersApi, ProfilesApi, UsersApi } from '../generated';
+import { Practitioner, Profile } from '../generated/profile';
 
 @Injectable()
 export class ChatService {
@@ -98,27 +100,57 @@ export class ChatService {
         ...filterDeleted,
       })
       .sort({ lastMessageAt: -1 });
+    try {
+      const chatsWithMessage = await Promise.all(
+        chats.map(async (chat) => {
+          const lastMessage = await this.messageModel
+            .findOne({ chats: chat._id, ...filterDeleted })
+            .sort({ createdAt: -1 });
+          const users = await Promise.all(
+            chat.members.map(async (member) => {
+              const userRes = await UsersApi.usersControllerFindOne(member);
+              const user = userRes.data;
+              let profile: Profile | Practitioner = null;
+              if (user.profiles.length != 0) {
+                profile = (
+                  await ProfilesApi.profileControllerFindOne(user.profiles[0])
+                ).data;
+              } else if (user.practitioners.length != 0) {
+                profile = (
+                  await PractitionersApi.practitionerControllerFindOne(
+                    user.practitioners[0],
+                  )
+                ).data;
+              }
+              return {
+                user,
+                profile,
+              };
+            }),
+          );
 
-    const chatsWithMessage = await Promise.all(
-      chats.map(async (chat) => {
-        const lastMessage = await this.messageModel
-          .findOne({ chats: chat._id, ...filterDeleted })
-          .sort({ createdAt: -1 });
+          return {
+            chat,
+            lastMessage,
+            users: users.map((u) => {
+              return {
+                userId: u.user._id,
+                firstName: u.user.firstName,
+                lastName: u.user.lastName,
+                profileImage: u.profile ? u.profile.profileImage : '',
+              };
+            }),
+          } as ChatWithLastMessageAndUserInfo;
+        }),
+      );
 
-        return {
-          chat,
-          lastMessage,
-          userId: '',
-          firstName: '',
-          lastName: '',
-          profileImage: '',
-        } as ChatWithLastMessageAndUserInfo;
-      }),
-    );
-
-    return {
-      chats: chatsWithMessage,
-    };
+      return {
+        chats: chatsWithMessage,
+      };
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(e.message, 500);
+    }
   }
 
   async findOne(id: string, user: AuthUser) {
