@@ -59,6 +59,12 @@ export class AttachmentService {
     return message.attachments;
   }
 
+  async findForChat(chatId: string, user: AuthUser) {
+    const chat = await this.getChat(user, chatId);
+
+    return this.attachmentModel.find({ chat: chat._id, ...filterDeleted });
+  }
+
   async findOne(id: string, user: AuthUser) {
     const attachment = await this.attachmentModel.findOne({
       _id: id,
@@ -87,11 +93,26 @@ export class AttachmentService {
   }
 
   async remove(id: string, user: AuthUser) {
-    const { _id } = await this.findOne(id, user);
+    const att = await this.findOne(id, user);
+    const { _id } = att;
     await this.attachmentModel.updateOne(
       { _id },
       { status: GlobalStatus.DELETED },
     );
+    if (att.url) {
+      const minioClient = new Client({
+        endPoint: process.env.S3_BASE_URL,
+        port: parseInt(process.env.S3_PORT),
+        useSSL: true,
+        accessKey: process.env.S3_ACCESS_KEY,
+        secretKey: process.env.S3_SECRET_KEY,
+      });
+
+      await minioClient.removeObject(
+        process.env.S3_BUCKET,
+        att.url.split('/').pop(),
+      );
+    }
   }
 
   async getAttachmentUrl(ext: string) {

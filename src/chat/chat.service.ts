@@ -207,4 +207,29 @@ export class ChatService {
       { members: chat.members },
     );
   }
+
+  async markRead(id: string, user: AuthUser) {
+    const chat = await this.chatModel.findOne({ _id: id, ...filterDeleted });
+    if (!chat) {
+      throw new HttpException('Chat not found', 404);
+    }
+
+    if (!chat.members.includes(user.userId)) {
+      throw new HttpException('You are not allowed to access this chat', 400);
+    }
+
+    try {
+      await this.messageModel.updateMany(
+        {
+          chats: chat._id,
+          readBy: { $ne: user.userId },
+        },
+        {
+          $push: { readBy: user.userId },
+        },
+      );
+    } catch (e) {
+      throw new HttpException('Error updating messages', 500);
+    }
+  }
 }

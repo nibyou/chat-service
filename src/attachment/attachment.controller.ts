@@ -28,6 +28,7 @@ export class AttachmentController {
     returnType: S3UrlResponse,
     roles: [
       RealmRoles.USER_PRACTITIONER,
+      RealmRoles.USER_PRACTITIONER_PENDING,
       RealmRoles.USER_PATIENT,
       RealmRoles.BACKEND_SERVICE,
       RealmRoles.ADMIN,
@@ -44,6 +45,7 @@ export class AttachmentController {
     returnType: Attachment,
     roles: [
       RealmRoles.USER_PRACTITIONER,
+      RealmRoles.USER_PRACTITIONER_PENDING,
       RealmRoles.USER_PATIENT,
       RealmRoles.BACKEND_SERVICE,
       RealmRoles.ADMIN,
@@ -75,6 +77,7 @@ export class AttachmentController {
     returnType: [Attachment],
     roles: [
       RealmRoles.USER_PRACTITIONER,
+      RealmRoles.USER_PRACTITIONER_PENDING,
       RealmRoles.USER_PATIENT,
       RealmRoles.BACKEND_SERVICE,
       RealmRoles.ADMIN,
@@ -89,12 +92,34 @@ export class AttachmentController {
   }
 
   @ReadRequest({
+    path: 'chat/:chatId',
+    summary: 'Get all attachments for a chat',
+    description: 'The attachments have been successfully returned.',
+    returnType: [Attachment],
+    roles: [
+      RealmRoles.USER_PRACTITIONER,
+      RealmRoles.USER_PRACTITIONER_PENDING,
+      RealmRoles.USER_PATIENT,
+      RealmRoles.BACKEND_SERVICE,
+      RealmRoles.ADMIN,
+    ],
+  })
+  @ApiOperation({ operationId: 'getAttachementsForChat' })
+  findForChat(
+    @Param('chatId') chatId: string,
+    @AuthenticatedUser() user: AuthUser,
+  ) {
+    return this.attachmentService.findForChat(chatId, user);
+  }
+
+  @ReadRequest({
     path: ':id',
     summary: 'Get an attachment',
     description: 'The attachment has been successfully returned.',
     returnType: Attachment,
     roles: [
       RealmRoles.USER_PRACTITIONER,
+      RealmRoles.USER_PRACTITIONER_PENDING,
       RealmRoles.USER_PATIENT,
       RealmRoles.BACKEND_SERVICE,
       RealmRoles.ADMIN,
@@ -112,6 +137,7 @@ export class AttachmentController {
     returnType: Attachment,
     roles: [
       RealmRoles.USER_PRACTITIONER,
+      RealmRoles.USER_PRACTITIONER_PENDING,
       RealmRoles.USER_PATIENT,
       RealmRoles.BACKEND_SERVICE,
       RealmRoles.ADMIN,
@@ -133,6 +159,7 @@ export class AttachmentController {
     returnType: null,
     roles: [
       RealmRoles.USER_PRACTITIONER,
+      RealmRoles.USER_PRACTITIONER_PENDING,
       RealmRoles.USER_PATIENT,
       RealmRoles.BACKEND_SERVICE,
       RealmRoles.ADMIN,

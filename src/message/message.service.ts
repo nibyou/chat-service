@@ -156,6 +156,12 @@ export class MessageService {
     }
 
     if (AuthUser.isAdmin(user) || chat.members.includes(user.userId)) {
+      await Promise.all(
+        message.attachments.map((att) => {
+          return this.attachmentService.remove(att as unknown as string, user);
+        }),
+      );
+
       return this.messageModel.findOneAndUpdate(
         { _id: id, ...filterDeleted },
         { status: GlobalStatus.DELETED },

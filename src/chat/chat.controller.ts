@@ -144,6 +144,8 @@ export class ChatController {
       RealmRoles.ADMIN,
       RealmRoles.BACKEND_SERVICE,
       RealmRoles.USER_PRACTITIONER,
+      RealmRoles.USER_PRACTITIONER_PENDING,
+      RealmRoles.USER_PATIENT,
     ],
   })
   update(
@@ -152,6 +154,25 @@ export class ChatController {
     @AuthenticatedUser() user: AuthUser,
   ) {
     return this.chatService.update(id, updateChatDto, user);
+  }
+
+  @Post(':id/markRead')
+  @ApiOperation({
+    summary: 'Mark a Chat as read',
+    operationId: 'markChatRead',
+  })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
+  @Roles({
+    roles: [
+      RealmRoles.ADMIN,
+      RealmRoles.BACKEND_SERVICE,
+      RealmRoles.USER_PRACTITIONER,
+      RealmRoles.USER_PRACTITIONER_PENDING,
+      RealmRoles.USER_PATIENT,
+    ],
+  })
+  markRead(@Param('id') id: string, @AuthenticatedUser() user: AuthUser) {
+    return this.chatService.markRead(id, user);
   }
 
   @Delete(':id')
