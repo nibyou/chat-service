@@ -18,7 +18,7 @@ services:
       - my-net
 
   node:
-    container_name: node
+    container_name: chat-service
     build:
       context: .
       dockerfile: Dockerfile
