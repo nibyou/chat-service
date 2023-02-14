@@ -53,6 +53,14 @@ export class Chat {
   })
   keyId: string;
 
+  @Prop({
+    default: () => [],
+  })
+  @ApiProperty({
+    type: [String],
+  })
+  attachments: string[];
+
   @Prop({ type: () => GlobalStatus, default: GlobalStatus.ACTIVE })
   @ApiProperty()
   status: GlobalStatus;

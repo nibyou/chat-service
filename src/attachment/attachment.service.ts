@@ -36,7 +36,14 @@ export class AttachmentService {
       chat: chat,
     };
 
-    return this.attachmentModel.create(payload);
+    const at = await this.attachmentModel.create(payload);
+
+    await this.chatModel.updateOne(
+      { _id: chat._id },
+      { $push: { attachments: at._id } },
+    );
+
+    return at;
   }
 
   findAll(f?: string) {
@@ -62,7 +69,10 @@ export class AttachmentService {
   async findForChat(chatId: string, user: AuthUser) {
     const chat = await this.getChat(user, chatId);
 
-    return this.attachmentModel.find({ chat: chat._id, ...filterDeleted });
+    return this.attachmentModel.find({
+      _id: { $in: chat.attachments },
+      ...filterDeleted,
+    });
   }
 
   async findOne(id: string, user: AuthUser) {
