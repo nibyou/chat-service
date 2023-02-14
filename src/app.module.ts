@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { KeycloakModule } from '@nibyou/keycloak';
 import { ChatModule } from './chat/chat.module';
 import { MessageModule } from './message/message.module';
-import { WssModule } from './wss/wss.module';
 import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
 import { AttachmentModule } from './attachment/attachment.module';
 import { EconsultModule } from './econsult/econsult.module';
@@ -21,7 +20,6 @@ const mongoOptions: MongooseModuleOptions = {
     KeycloakModule,
     ChatModule,
     MessageModule,
-    WssModule,
     MongooseModule.forRoot(process.env.MONGO_URL, mongoOptions),
     AttachmentModule,
     EconsultModule,

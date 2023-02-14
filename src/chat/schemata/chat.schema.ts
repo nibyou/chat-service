@@ -10,6 +10,27 @@ export enum MemberType {
   PATIENT = 'PATIENT',
 }
 
+export class MemberPermission {
+  @ApiProperty()
+  @Prop()
+  userId: string;
+  @ApiProperty()
+  @Prop({
+    default: false,
+  })
+  isAdmin: boolean;
+  @ApiProperty()
+  @Prop({
+    default: true,
+  })
+  hasRightToSpeak: boolean;
+  @Prop()
+  @ApiProperty({
+    enum: MemberType,
+  })
+  memberType: MemberType;
+}
+
 @Schema({ timestamps: true })
 export class Chat {
   @Prop()
@@ -33,6 +54,12 @@ export class Chat {
     format: 'uuid',
   })
   members: string[];
+
+  @Prop()
+  @ApiProperty({
+    type: () => [MemberPermission],
+  })
+  memberPermissions: MemberPermission[];
 
   @Prop()
   @ApiProperty({
