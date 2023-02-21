@@ -7,7 +7,7 @@ import { Model } from 'mongoose';
 import { Chat } from '../chat/schemata/chat.schema';
 import { Message } from '../message/schemata/message.schema';
 import { ChatService } from '../chat/chat.service';
-import { AuthUser, GlobalStatus } from '@nibyou/types';
+import { AuthUser } from '@nibyou/types';
 import { filterDeleted } from '../query-helpers/global.query-helpers';
 import { Client } from 'minio';
 import { v4 as uuid } from 'uuid';
@@ -105,10 +105,7 @@ export class AttachmentService {
   async remove(id: string, user: AuthUser) {
     const att = await this.findOne(id, user);
     const { _id } = att;
-    await this.attachmentModel.updateOne(
-      { _id },
-      { status: GlobalStatus.DELETED },
-    );
+    await this.attachmentModel.deleteOne({ _id });
     if (att.url) {
       const minioClient = new Client({
         endPoint: process.env.S3_BASE_URL,
