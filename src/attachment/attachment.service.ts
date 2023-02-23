@@ -141,7 +141,7 @@ export class AttachmentService {
 
     return {
       upload,
-      download: `https://${process.env.S3_BASE_URL}/${process.env.S3_BUCKET}/${uid}.${ext}`,
+      download: `https://${process.env.S3_DOWNLOAD_URL}/${process.env.S3_BUCKET}/${uid}.${ext}`,
     } as S3UrlResponse;
   }
 
