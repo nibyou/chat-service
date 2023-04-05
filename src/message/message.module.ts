@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { MessageController } from './message.controller';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -15,8 +15,9 @@ import { ChatModule } from '../chat/chat.module';
       { name: Message.name, schema: MessageSchema },
       { name: Chat.name, schema: ChatSchema },
     ]),
-    AttachmentModule,
-    ChatModule,
+    forwardRef(() => AttachmentModule),
+    forwardRef(() => ChatModule),
   ],
+  exports: [MessageService],
 })
 export class MessageModule {}

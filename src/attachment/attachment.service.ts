@@ -71,7 +71,14 @@ export class AttachmentService {
       ...filterDeleted,
     });
 
-    await this.getChat(user, attachment.chat.toString());
+    const chat = await this.chatModel.findOne({
+      attachments: attachment._id,
+      ...filterDeleted,
+    });
+
+    if (!chat) throw new HttpException('Chat not found', 404);
+
+    await this.getChat(user, chat._id);
 
     return attachment;
   }
@@ -113,6 +120,15 @@ export class AttachmentService {
         att.url.split('/').pop(),
       );
     }
+    const chat = await this.chatModel.findOne({
+      attachments: _id,
+      ...filterDeleted,
+    });
+
+    await this.chatModel.updateOne(
+      { _id: chat._id },
+      { $pull: { attachments: _id.toString() } },
+    );
   }
 
   async getAttachmentUrl(ext: string) {
